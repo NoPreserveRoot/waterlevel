@@ -14,7 +14,7 @@ fi
 
 if [ $1 == "--start" ]; then
 	docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
-	echo -e "\nEnjoy your web GUI!"
+	echo -e "\nEnjoy not having to deal with Docker commands!"
 fi
 
 if [ $1 == "--stop" ]; then
@@ -38,5 +38,5 @@ if [ $1 == "--update" ]; then
 	echo "Installing and starting updated version of Portainer"
 	docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 
-	echo -e "\nDelcioso!"
+	echo -e "\nNice to have the process automated, huh?"
 fi
