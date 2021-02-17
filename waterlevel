@@ -1,0 +1,42 @@
+if [ $# -eq 0 ]; then
+#	echo -e "No args provided"
+	echo -e "Run \"waterlevel --help\" for more information"
+	exit 1
+fi
+
+if [ $1 == "--help" ]; then
+	echo -e "WaterLevel help:\n"
+	echo "--help or -h       Show this page"
+	echo "--start or -s      Start Portainer"
+	echo "--stop or -k       Stop Portainer"
+	echo "--update or -u     Update Portainer"
+fi
+
+if [ $1 == "--start" ]; then
+	docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+	echo -e "\nEnjoy your web GUI!"
+fi
+
+if [ $1 == "--stop" ]; then
+	cont_id_stop=$(docker ps | grep "portainer" | cut -d' ' -f1)
+	docker stop $cont_id
+fi
+
+if [ $1 == "--update" ]; then
+	# Get container's ID, stop the container, and then remove it
+	cont_id=$(docker ps | grep "portainer" | cut -d' ' -f1)
+	echo "Removing container with ID $cont_id"
+	docker stop $cont_id
+	docker rm $cont_id
+
+	# Get image ID and remove old image
+	image_id=$(docker images --format="{{.Repository}} {{.ID}}" | grep portainer | cut -d' ' -f2)
+	echo "Removing image with ID $image_id"
+	docker image rm $image_id --force
+	
+	# Install and update new version of Portainer
+	echo "Installing and starting updated version of Portainer"
+	docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+
+	echo -e "\nDelcioso!"
+fi
